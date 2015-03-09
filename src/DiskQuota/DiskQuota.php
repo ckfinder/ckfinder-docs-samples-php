@@ -1,11 +1,24 @@
 <?php
 
+/*
+ * CKFinder
+ * ========
+ * http://cksource.com/ckfinder
+ * Copyright (C) 2007-2015, CKSource - Frederico Knabben. All rights reserved.
+ *
+ * The software, this file and its contents are subject to the CKFinder
+ * License. Please read the license.txt file before using, installing, copying,
+ * modifying or distribute this file or part of its contents. The contents of
+ * this file is part of the Source Code of CKFinder.
+ */
+
 namespace CKSource\CKFinder\Plugin\DiskQuota;
 
 use CKSource\CKFinder\CKFinder;
 use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Event\CKFinderEvent;
 use CKSource\CKFinder\Plugin\PluginInterface;
+use CKSource\CKFinder\Utils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DiskQuota implements PluginInterface, EventSubscriberInterface
@@ -34,8 +47,9 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
     public function getDefaultConfig()
     {
         return [
-            'userQuota' => '100MB'
-        ];
+            'userQuota' => '100MB' // Quota defined using PHP shorthand byte value
+        ];                         // (http://php.net/manual/pl/faq.using.php#faq.using.shorthandbytes)
+
     }
 
     /**
@@ -45,8 +59,8 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
      */
     protected function isQuotaAvailable()
     {
-        // Get user quota defined in configuration (the default value can be overwritten in CKFinder configuration file).
-        $quota = $this->app['config']->get('DiskQuota.userQuota');
+        // Get user quota in bytes
+        $quota = Utils::returnBytes($this->app['config']->get('DiskQuota.userQuota'));
 
         /**
          * For documentation purposes it's only a method stub.
