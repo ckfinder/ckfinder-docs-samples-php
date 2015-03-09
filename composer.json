@@ -1,0 +1,24 @@
+{
+    "name": "cksource/ckfinder-docs-samples-php",
+    "description": "CKFinder v3 PHP connector documentation code samples",
+    "authors": [
+        {
+            "name": "CKSource",
+            "homepage": "http://cksource.com"
+        }
+    ],
+    "require": {
+        "cksource/ckfinder": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:cksource/ckfinder-connector-php.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CKSource\\CKFinder\\Plugin\\": "src/"
+        }
+    }
+}
