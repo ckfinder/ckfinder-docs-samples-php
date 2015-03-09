@@ -45,6 +45,9 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
      */
     protected function isQuotaAvailable()
     {
+        // Get user quota defined in configuration (the default value can be overwritten in CKFinder configuration file).
+        $quota = $this->app['config']->get('DiskQuota.userQuota');
+
         /**
          * For documentation purposes it's only a method stub.
          *
