@@ -12,19 +12,19 @@
  * this file is part of the Source Code of CKFinder.
  */
 
-namespace CKSource\CKFinder\Plugin\DiskQuota;
+namespace CKSource\CKFinder\Plugin\UserActionsLogger;
 
 use CKSource\CKFinder\CKFinder;
 use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Event\CKFinderEvent;
+use CKSource\CKFinder\Filesystem\Path;
 use CKSource\CKFinder\Plugin\PluginInterface;
-use CKSource\CKFinder\Utils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * DiskQuota plugin sample class
+ * UserActionsLogger plugin sample class
  */
-class DiskQuota implements PluginInterface, EventSubscriberInterface
+class UserActionsLogger implements PluginInterface, EventSubscriberInterface
 {
     /**
      * @var CKFinder
@@ -50,40 +50,31 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
     public function getDefaultConfig()
     {
         return [
-            'userQuota' => '100MB' // Quota defined using PHP shorthand byte value
-        ];                         // (http://php.net/manual/pl/faq.using.php#faq.using.shorthandbytes)
-
+            'logFilePath' => Path::combine(__DIR__, 'user_actions.log')
+        ];
     }
 
     /**
-     * Checks if current user has any storage quota left.
+     * Event listener method that logs user actions
      *
-     * @return bool false if current user storage quota has been exceeded, true otherwise
-     */
-    protected function isQuotaAvailable()
-    {
-        // Get user quota in bytes
-        $quota = Utils::returnBytes($this->app['config']->get('DiskQuota.userQuota'));
-
-        /**
-         * For documentation purposes it's only a method stub.
-         *
-         * @todo custom implementation of current user quota check
-         */
-
-        return true;
-    }
-
-    /**
-     * Event listener checking current user quota
+     * @param CKFinderEvent $event     event object
+     * @param string        $eventName event name
      *
-     * @throws \Exception if storage quota for current user exceeded
+     * @throws \Exception if log file is not writable
      */
-    public function checkQuota()
+    public function logUserAction(CKFinderEvent $event, $eventName)
     {
-        if (!$this->isQuotaAvailable()) {
-            throw new \Exception('Storage quota exceeded', Error::CUSTOM_ERROR);
+        global $user; // Global dummy user object
+
+        $logLine = sprintf("[%s] - %s : %s\n", date('Y.m.d H:i:s'), $user->getUsername(), $eventName);
+
+        $logFilePath = $this->app['config']->get('UserActionsLogger.logFilePath');
+
+        if (!is_writable($logFilePath)) {
+            throw new \Exception('UserActionsLogger: the log file is not writable', Error::CUSTOM_ERROR);
         }
+
+        file_put_contents($logFilePath, $logLine, FILE_APPEND);
     }
 
     /**
@@ -108,11 +99,22 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [
-            CKFinderEvent::BEFORE_COMMAND_FILE_UPLOAD   => 'checkQuota',
-            CKFinderEvent::BEFORE_COMMAND_COPY_FILES    => 'checkQuota',
-            CKFinderEvent::BEFORE_COMMAND_IMAGE_SCALE   => 'checkQuota',
-            CKFinderEvent::BEFORE_COMMAND_CREATE_FOLDER => 'checkQuota'
+        $actionsToListen = [
+            CKFinderEvent::COPY_FILE,
+            CKFinderEvent::CREATE_FOLDER,
+            CKFinderEvent::DELETE_FILE,
+            CKFinderEvent::DELETE_FOLDER,
+            CKFinderEvent::DOWNLOAD_FILE,
+            CKFinderEvent::FILE_UPLOAD,
+            CKFinderEvent::MOVE_FILE,
+            CKFinderEvent::RENAME_FILE,
+            CKFinderEvent::RENAME_FOLDER,
+            CKFinderEvent::SAVE_IMAGE,
+            CKFinderEvent::EDIT_IMAGE,
+            CKFinderEvent::CREATE_THUMBNAIL,
+            CKFinderEvent::CREATE_SCALED_IMAGE
         ];
+
+        return array_fill_keys($actionsToListen, 'logUserAction');
     }
 }

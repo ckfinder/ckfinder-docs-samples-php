@@ -1,19 +1,19 @@
-CKFinder DiskQuota plugin stub
-==============================
+CKFinder DiskQuota plugin sample
+================================
 
-This plugin sample shows usage of CKFinder events to set disk storage limit per user.
+This plugin sample illustrates usage of CKFinder events to set disk storage limit per user.
 
-**Note**: This is **NOT** a fully functional plugin. The quota checking method `checkQuota()` needs custom implementation.
+Please notice this is **not** a fully functional plugin. The quota checking method `isQuotaAvailable()` needs custom implementation.
 
 ## Configuration options
 
-To set custom quota add following option to main CKFinder config file (usually named `config.php`):
+To set quota add following option to main CKFinder config file (usually named `config.php`):
 
 ```php
 // ...
-$config['DiskQuota'] = array(
+$config['DiskQuota'] = [
     'userQuota' => '200M'
-),
+],
 ```
 
 The quota limit can be defined using [PHP shorthand byte values](http://php.net/manual/pl/faq.using.php#faq.using.shorthandbytes).
