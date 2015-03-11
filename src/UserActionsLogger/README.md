@@ -12,7 +12,7 @@ please add following option to main CKFinder config file (usually named `config.
 // ...
 $config['UserActionsLogger'] = [
     'logFilePath' => '/custom/path/filename.log'
-],
+];
 ```
 
 **Notice**: this plugin is a simplified demonstration. In a real plugin like this you should remember about

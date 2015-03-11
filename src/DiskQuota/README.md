@@ -13,7 +13,7 @@ To set quota add following option to main CKFinder config file (usually named `c
 // ...
 $config['DiskQuota'] = [
     'userQuota' => '200M'
-],
+];
 ```
 
 The quota limit can be defined using [PHP shorthand byte values](http://php.net/manual/pl/faq.using.php#faq.using.shorthandbytes).
