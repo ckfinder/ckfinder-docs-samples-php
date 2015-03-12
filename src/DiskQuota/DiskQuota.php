@@ -51,7 +51,6 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
         return [
             'userQuota' => '100MB' // Quota defined using PHP shorthand byte value
         ];                         // (http://php.net/manual/pl/faq.using.php#faq.using.shorthandbytes)
-
     }
 
     /**

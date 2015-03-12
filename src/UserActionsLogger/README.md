@@ -15,5 +15,7 @@ $config['UserActionsLogger'] = [
 ];
 ```
 
+Please remember about changing file permissions to make the log file writable by PHP.
+
 **Notice**: this plugin is a simplified demonstration. In a real plugin like this you should remember about
 things like checking file permissions and concurrent file access by multiple scripts.

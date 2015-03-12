@@ -5,7 +5,7 @@ This plugin sample illustrates how to create custom CKFinder commands.
 
 If this plugin is enabled, you can call an additional `GetFileInfo` command, which returns some very basic
 information about a file, like size and last modification timestamp. This behavior can be simply altered to return any 
-other information about a file (for example EXIF data for images, ID3 tags for mp3 files).
+other information about the file (for example EXIF data for images, ID3 tags for mp3 files).
 
 ### Sample request (HTTP GET method)
 Get basic information about `foo.png` file located in the `sub1` directory of the `Files` resource type.

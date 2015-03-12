@@ -1,6 +1,7 @@
 {
-    "name": "cksource/ckfinder-docs-samples-php",
+    "name": "ckfinder/ckfinder-docs-samples-php",
     "description": "CKFinder v3 PHP connector documentation code samples",
+    "license": "MIT",
     "authors": [
         {
             "name": "CKSource",
