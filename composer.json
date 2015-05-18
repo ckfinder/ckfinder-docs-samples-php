@@ -8,15 +8,6 @@
             "homepage": "http://cksource.com"
         }
     ],
-    "require": {
-        "cksource/ckfinder": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:cksource/ckfinder-connector-php.git"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "CKSource\\CKFinder\\Plugin\\": "src/"
