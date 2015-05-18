@@ -26,7 +26,7 @@ To enable plugins add their names to `plugins` configuration option in connector
 
 ```php
 $config['plugins'] = [
-	'DiskQuota', 'ImageWatermark', 'GetFileInfo'
+	'DiskQuota', 'GetFileInfo', 'UserActionsLogger'
 ];
 ```
     
