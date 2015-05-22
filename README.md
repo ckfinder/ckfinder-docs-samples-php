@@ -2,12 +2,8 @@
 
 This repository contains ready-to-use code samples created for the [CKFinder PHP connector documentation](http://docs.cksource.com/ckfinder3-php/).
 
-## Installation with Composer
-```
-composer require ckfinder/ckfinder-docs-samples-php
-```
+## Installation
 
-## Manual Installation
 1. Clone this repository (or download ZIP).
 2. Move downloaded plugins to the CKFinder `plugins` directory, so the structure looks like below:
 
