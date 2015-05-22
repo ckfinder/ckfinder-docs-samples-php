@@ -23,7 +23,7 @@ use CKSource\CKFinder\Plugin\PluginInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * GetFileInfo command plugin class
+ * GetFileInfo command plugin class.
  */
 class GetFileInfo extends CommandAbstract implements PluginInterface
 {
@@ -43,9 +43,9 @@ class GetFileInfo extends CommandAbstract implements PluginInterface
 
     /**
      * Returns an array with default configuration for this plugin. Any of
-     * the plugin config options can be overwritten in CKFinder configuration file.
+     * the plugin configuration options can be overwritten in the CKFinder configuration file.
      *
-     * @return array plugin default configuration
+     * @return array Default plugin configuration
      */
     public function getDefaultConfig()
     {
@@ -53,10 +53,10 @@ class GetFileInfo extends CommandAbstract implements PluginInterface
     }
 
     /**
-     * Main command method
+     * Main command method.
      *
-     * @param Request       $request       current request object
-     * @param WorkingFolder $workingFolder current working folder object
+     * @param Request       $request       Current request object
+     * @param WorkingFolder $workingFolder Current working folder object
      *
      * @return array
      *
