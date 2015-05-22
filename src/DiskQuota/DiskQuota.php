@@ -21,7 +21,7 @@ use CKSource\CKFinder\Utils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * DiskQuota plugin sample class
+ * DiskQuota plugin sample class.
  */
 class DiskQuota implements PluginInterface, EventSubscriberInterface
 {
@@ -31,7 +31,7 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
     protected $app;
 
     /**
-     * Method used to inject DI container to the plugin
+     * Method used to inject the DI container to the plugin.
      *
      * @param CKFinder $app
      */
@@ -42,9 +42,9 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
 
     /**
      * Returns an array with default configuration for this plugin. Any of
-     * the plugin config options can be overwritten in CKFinder configuration file.
+     * the plugin configuration options can be overwritten in the CKFinder configuration file.
      *
-     * @return array plugin default configuration
+     * @return array Default plugin configuration
      */
     public function getDefaultConfig()
     {
@@ -54,28 +54,28 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Checks if current user has any storage quota left.
+     * Checks if the current user has any storage quota left.
      *
-     * @return bool false if current user storage quota has been exceeded, true otherwise
+     * @return bool `false` if current user storage quota was exceeded, `true` otherwise.
      */
     protected function isQuotaAvailable()
     {
-        // Get user quota in bytes
+        // Get the user quota in bytes.
         $quota = Utils::returnBytes($this->app['config']->get('DiskQuota.userQuota'));
 
         /**
-         * For documentation purposes it's only a method stub.
+         * For documentation purposes it is only a method stub.
          *
-         * @todo custom implementation of current user quota check
+         * @todo Custom implementation of the current user quota check.
          */
 
         return true;
     }
 
     /**
-     * Event listener checking current user quota
+     * Event listener checking current user quota.
      *
-     * @throws \Exception if storage quota for current user exceeded
+     * @throws \Exception If storage quota for the current user is exceeded.
      */
     public function checkQuota()
     {
@@ -89,10 +89,10 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
      *
      * The array keys are event names and the value can be:
      *
-     *  * The method name to call (priority defaults to 0)
-     *  * An array composed of the method name to call and the priority
+     *  * The method name to call (priority defaults to 0).
+     *  * An array composed of the method name to call and the priority.
      *  * An array of arrays composed of the method names to call and respective
-     *    priorities, or 0 if unset
+     *    priorities, or 0 if unset.
      *
      * For instance:
      *
@@ -100,7 +100,7 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
      *  * array('eventName' => array('methodName', $priority))
      *  * array('eventName' => array(array('methodName1', $priority), array('methodName2'))
      *
-     * @return array The event names to listen to
+     * @return array The event names to listen to.
      */
     public static function getSubscribedEvents()
     {
