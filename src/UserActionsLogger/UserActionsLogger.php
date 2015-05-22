@@ -21,7 +21,7 @@ use CKSource\CKFinder\Plugin\PluginInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * UserActionsLogger plugin sample class
+ * UserActionsLogger plugin sample class.
  */
 class UserActionsLogger implements PluginInterface, EventSubscriberInterface
 {
@@ -31,7 +31,7 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
     protected $app;
 
     /**
-     * Method used to inject DI container to the plugin
+     * Method used to inject the DI container to the plugin.
      *
      * @param CKFinder $app
      */
@@ -41,10 +41,10 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Returns an array with default configuration for this plugin. Any of
-     * the plugin config options can be overwritten in CKFinder configuration file.
+     * Returns an array with the default configuration for this plugin. Any of
+     * the plugin configuration options can be overwritten in the CKFinder configuration file.
      *
-     * @return array plugin default configuration
+     * @return array Default plugin configuration
      */
     public function getDefaultConfig()
     {
@@ -54,12 +54,12 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Event listener method that logs user actions
+     * Event listener method that logs user actions.
      *
-     * @param CKFinderEvent $event     event object
-     * @param string        $eventName event name
+     * @param CKFinderEvent $event     Event object
+     * @param string        $eventName Event name
      *
-     * @throws \Exception if log file is not writable
+     * @throws \Exception if the log file is not writable.
      */
     public function logUserAction(CKFinderEvent $event, $eventName)
     {
@@ -81,10 +81,10 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
      *
      * The array keys are event names and the value can be:
      *
-     *  * The method name to call (priority defaults to 0)
-     *  * An array composed of the method name to call and the priority
+     *  * The method name to call (priority defaults to 0).
+     *  * An array composed of the method name to call and the priority.
      *  * An array of arrays composed of the method names to call and respective
-     *    priorities, or 0 if unset
+     *    priorities, or 0 if unset.
      *
      * For instance:
      *

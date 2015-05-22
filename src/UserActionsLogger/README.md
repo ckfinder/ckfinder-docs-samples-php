@@ -1,12 +1,11 @@
-CKFinder UserActionsLogger plugin sample
-========================================
+# CKFinder UserActionsLogger Plugin Sample
 
-This plugin sample illustrates usage of CKFinder events to log chosen user actions.
+This sample plugin [illustrates the usage of CKFinder events](http://docs.cksource.com/ckfinder3-php/howto.html#howto_logging_actions) to log selected user actions.
 
-## Configuration options
+## Configuration Options
 
-By default the log file is created inside plugin directory. To change it,
-please add following option to main CKFinder config file (usually named `config.php`):
+By default the log file is created inside the plugin directory. To change it,
+please add the following option to the main CKFinder configuration file (usually named `config.php`):
 
 ```php
 // ...
@@ -15,7 +14,7 @@ $config['UserActionsLogger'] = [
 ];
 ```
 
-Please remember about changing file permissions to make the log file writable by PHP.
+Do remember about changing file permissions to make the log file writable by PHP.
 
-**Notice**: this plugin is a simplified demonstration. In a real plugin like this you should remember about
+**Notice**: This plugin is a simplified demonstration. In a real plugin like this you should remember about
 things like checking file permissions and concurrent file access by multiple scripts.
