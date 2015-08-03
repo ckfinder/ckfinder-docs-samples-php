@@ -13,6 +13,7 @@
 
 namespace CKSource\CKFinder\Plugin\UserActionsLogger;
 
+use CKSource\CKFinder\Backend\Adapter\Local as LocalAdapter;
 use CKSource\CKFinder\CKFinder;
 use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Event\CKFinderEvent;
@@ -54,6 +55,67 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
     }
 
     /**
+     * Returns a file or directory path used for given event.
+     *
+     * @param CKFinderEvent $event     Event object
+     * @param string        $eventName Event name
+     *
+     * @return string file or directory path - depending on event type
+     */
+    protected function getPathFromEvent(CKFinderEvent $event, $eventName)
+    {
+        $workingFolder = $event->getContainer()->getWorkingFolder();
+        $path = '';
+
+        switch ($eventName) {
+            case CKFinderEvent::COPY_FILE:
+                /* @var $event \CKSource\CKFinder\Event\CopyFileEvent */
+                $path = $event->getCopiedFile()->getFilePath();
+                break;
+            case CKFinderEvent::DELETE_FILE:
+                /* @var $event \CKSource\CKFinder\Event\DeleteFileEvent */
+                $path = $event->getDeletedFile()->getFilePath();
+                break;
+            case CKFinderEvent::DOWNLOAD_FILE:
+                /* @var $event \CKSource\CKFinder\Event\DownloadFileEvent */
+                $path = $event->getDownloadedFile()->getFilePath();
+                break;
+            case CKFinderEvent::MOVE_FILE:
+                /* @var $event \CKSource\CKFinder\Event\MoveFileEvent */
+                $path = $event->getMovedFile()->getFilePath();
+                break;
+            case CKFinderEvent::RENAME_FILE:
+                /* @var $event \CKSource\CKFinder\Event\RenameFileEvent */
+                $path = $event->getRenamedFile()->getFilePath();
+                break;
+            case CKFinderEvent::SAVE_IMAGE:
+            case CKFinderEvent::EDIT_IMAGE:
+                /* @var $event \CKSource\CKFinder\Event\EditFileEvent */
+                $path = $event->getEditedFile()->getFilePath();
+                break;
+            case CKFinderEvent::CREATE_RESIZED_IMAGE:
+                /* @var $event \CKSource\CKFinder\Event\ResizeImageEvent */
+                $path = $event->getResizedImage()->getFilePath();
+                break;
+            case CKFinderEvent::CREATE_FOLDER:
+                /* @var $event \CKSource\CKFinder\Event\CreateFolderEvent */
+                $path = Path::combine($workingFolder->getPath(), $event->getNewFolderName());
+                break;
+            case CKFinderEvent::DELETE_FOLDER:
+            case CKFinderEvent::RENAME_FOLDER:
+                $path = Path::combine($workingFolder->getPath());
+                break;
+            default:
+                return 'undefined';
+        }
+
+        $backend = $workingFolder->getBackend();
+        $adapter = $backend->getAdapter();
+
+        return $adapter instanceof LocalAdapter ? $adapter->applyPathPrefix($path) : $path;
+    }
+
+    /**
      * Event listener method that logs user actions.
      *
      * @param CKFinderEvent $event     Event object
@@ -65,7 +127,7 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
     {
         global $user; // Global dummy user object
 
-        $logLine = sprintf("[%s] - %s : %s\n", date('Y.m.d H:i:s'), $user->getUsername(), $eventName);
+        $logLine = sprintf("[%s] - %s : %s (used path: %s)\n", date('Y.m.d H:i:s'), $user->getUsername(), $eventName, $this->getPathFromEvent($event, $eventName));
 
         $logFilePath = $this->app['config']->get('UserActionsLogger.logFilePath');
 
@@ -109,7 +171,7 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
             CKFinderEvent::SAVE_IMAGE,
             CKFinderEvent::EDIT_IMAGE,
             CKFinderEvent::CREATE_THUMBNAIL,
-            CKFinderEvent::CREATE_SCALED_IMAGE
+            CKFinderEvent::CREATE_RESIZED_IMAGE
         ];
 
         return array_fill_keys($actionsToListen, 'logUserAction');
