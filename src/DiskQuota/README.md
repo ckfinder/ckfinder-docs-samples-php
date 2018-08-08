@@ -1,6 +1,6 @@
 # CKFinder 3 DiskQuota Plugin Sample
 
-This sample plugin [illustrates the usage of CKFinder events](http://docs.cksource.com/ckfinder3-php/howto.html#howto_disk_quota) to set disk storage limit per user.
+This sample plugin [illustrates the usage of CKFinder events](https://ckeditor.com/docs/ckfinder/ckfinder3-php/howto.html#howto_disk_quota) to set disk storage limit per user.
 
 Please notice this is **not** a fully functional plugin. The quota checking method `isQuotaAvailable()` needs custom implementation.
 
