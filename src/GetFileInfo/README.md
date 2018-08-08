@@ -1,6 +1,6 @@
 # CKFinder 3 GetFileInfo Plugin Sample
 
-This sample plugin illustrates [how to create custom CKFinder commands](http://docs.cksource.com/ckfinder3-php/howto.html#howto_custom_commands).
+This sample plugin illustrates [how to create custom CKFinder commands](https://ckeditor.com/docs/ckfinder/ckfinder3-php/howto.html#howto_custom_commands).
 
 If this plugin is enabled, you can call an additional `GetFileInfo` command that returns some very basic
 information about a file, like the size and the last modification timestamp. This behavior can be simply altered to return any 
@@ -39,4 +39,4 @@ $workingFolder->omitResponseInfo();
 
 Another solution is to return any other type of [Response](http://symfony.com/doc/current/components/http_foundation/introduction.html#response) object directly from the `execute` method.
 
-For more detailed information about commands, please refer to [Commands section](http://docs.cksource.com/ckfinder3-php/commands.html) of CKFinder 3 PHP connector documentation.
+For more detailed information about commands, please refer to [Commands section](https://ckeditor.com/docs/ckfinder/ckfinder3-php/commands.html) of CKFinder 3 PHP connector documentation.
