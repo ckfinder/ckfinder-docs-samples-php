@@ -1,6 +1,6 @@
 # CKFinder 3 - Sample PHP Plugins
 
-This repository contains ready-to-use code samples created for the [CKFinder PHP connector documentation](http://docs.cksource.com/ckfinder3-php/).
+This repository contains ready-to-use code samples created for the [CKFinder PHP connector documentation](https://ckeditor.com/docs/ckfinder/ckfinder3-php/).
 
 ## Installation
 
@@ -17,7 +17,7 @@ plugins
     └── UserActionsLogger.php
 ```
 
-To enable plugins, add their names to the [`plugins`](http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_plugins) configuration option in the connector configuration file (by default `config.php`):
+To enable plugins, add their names to the [`plugins`](https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_plugins) configuration option in the connector configuration file (by default `config.php`):
 
 ```php
 $config['plugins'] = [
