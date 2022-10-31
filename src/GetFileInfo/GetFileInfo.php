@@ -3,12 +3,13 @@
 /*
  * CKFinder
  * ========
- * http://cksource.com/ckfinder
- * Copyright (C) 2007-2015, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2021, CKSource - Frederico Knabben. All rights reserved.
  *
- * The software, this file and its contents are subject to the MIT License.
- * Please read the LICENSE.md file before using, installing, copying,
- * modifying or distribute this file or part of its contents.
+ * The software, this file and its contents are subject to the CKFinder
+ * License. Please read the license.txt file before using, installing, copying,
+ * modifying or distribute this file or part of its contents. The contents of
+ * this file is part of the Source Code of CKFinder.
  */
 
 namespace CKSource\CKFinder\Plugin\GetFileInfo;
@@ -38,7 +39,7 @@ class GetFileInfo extends CommandAbstract implements PluginInterface
      * @var array
      */
     protected $requires = [
-        Permission::FILE_VIEW
+        Permission::FILE_VIEW,
     ];
 
     /**
@@ -71,8 +72,6 @@ class GetFileInfo extends CommandAbstract implements PluginInterface
             throw new \Exception('File not found', Error::FILE_NOT_FOUND);
         }
 
-        $fileMetadada = $backend->getMetadata(Path::combine($workingFolder->getPath(), $fileName));
-
-        return $fileMetadada;
+        return $backend->getMetadata(Path::combine($workingFolder->getPath(), $fileName));
     }
 }
