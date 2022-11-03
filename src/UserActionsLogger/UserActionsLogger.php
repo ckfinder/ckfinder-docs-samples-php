@@ -3,17 +3,17 @@
 /*
  * CKFinder
  * ========
- * http://cksource.com/ckfinder
- * Copyright (C) 2007-2015, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2021, CKSource - Frederico Knabben. All rights reserved.
  *
- * The software, this file and its contents are subject to the MIT License.
- * Please read the LICENSE.md file before using, installing, copying,
- * modifying or distribute this file or part of its contents.
+ * The software, this file and its contents are subject to the CKFinder
+ * License. Please read the license.txt file before using, installing, copying,
+ * modifying or distribute this file or part of its contents. The contents of
+ * this file is part of the Source Code of CKFinder.
  */
 
 namespace CKSource\CKFinder\Plugin\UserActionsLogger;
 
-use CKSource\CKFinder\Backend\Adapter\Local as LocalAdapter;
 use CKSource\CKFinder\CKFinder;
 use CKSource\CKFinder\Error;
 use CKSource\CKFinder\Event\CKFinderEvent;
@@ -34,8 +34,6 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
 
     /**
      * Method used to inject the DI container to the plugin.
-     *
-     * @param CKFinder $app
      */
     public function setContainer(CKFinder $app)
     {
@@ -51,75 +49,8 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
     public function getDefaultConfig()
     {
         return [
-            'logFilePath' => Path::combine(__DIR__, 'user_actions.log')
+            'logFilePath' => Path::combine(__DIR__, 'user_actions.log'),
         ];
-    }
-
-    /**
-     * Returns a more detailed information about logged operation.
-     *
-     * Note: Due to the fact that all paths used by CKFinder needs to be relative, all paths in the log use following format:
-     * [backend name]://backend/relative/path
-     *
-     * @param CKFinderEvent $event     Event object
-     * @param string        $eventName Event name
-     *
-     * @return string more detailed information about the event - depending on event type
-     */
-    protected function getInfoFromEvent(CKFinderEvent $event, $eventName)
-    {
-        $workingFolder = $event->getContainer()->getWorkingFolder();
-
-        switch ($eventName) {
-            case CKFinderEvent::MOVE_FILE:
-            case CKFinderEvent::COPY_FILE:
-                /* @var $event \CKSource\CKFinder\Event\CopyFileEvent */
-                $copiedFile = $event->getFile();
-                $sourcePath = $this->createPath($copiedFile->getResourceType(), $copiedFile->getSourceFilePath());
-                $targetPath = $this->createPath($copiedFile->getTargetFolder()->getResourceType(), $copiedFile->getTargetFilePath());
-                return $sourcePath . ' -> ' . $targetPath;
-            case CKFinderEvent::DELETE_FILE:
-            case CKFinderEvent::DOWNLOAD_FILE:
-            case CKFinderEvent::SAVE_IMAGE:
-            case CKFinderEvent::EDIT_IMAGE:
-                /* @var $file \CKSource\CKFinder\Filesystem\File\ExistingFile */
-                $file = $event->getFile();
-                return $this->createPath($file->getResourceType(), $file->getFilePath());
-            case CKFinderEvent::RENAME_FILE:
-                /* @var $event \CKSource\CKFinder\Event\RenameFileEvent */
-                $renamedFile = $event->getFile();
-                $resourceType = $renamedFile->getResourceType();
-                $sourcePath = $this->createPath($resourceType, $renamedFile->getFilePath());
-                $targetPath = $this->createPath($resourceType, $renamedFile->getNewFilePath());
-                return $sourcePath . ' -> ' . $targetPath;
-            case CKFinderEvent::CREATE_RESIZED_IMAGE:
-                /* @var $event \CKSource\CKFinder\Event\ResizeImageEvent */
-                $resizedImage = $event->getResizedImage();
-                return $this->createPath($resizedImage->getResourceType(), $resizedImage->getFilePath());
-            case CKFinderEvent::CREATE_FOLDER:
-                /* @var $event \CKSource\CKFinder\Event\CreateFolderEvent */
-                return $this->createPath($workingFolder->getResourceType(), Path::combine($workingFolder->getPath(), $event->getNewFolderName()));
-            case CKFinderEvent::DELETE_FOLDER:
-                return $this->createPath($workingFolder->getResourceType(), $workingFolder->getPath());
-            case CKFinderEvent::RENAME_FOLDER:
-                /* @var $event \CKSource\CKFinder\Event\RenameFolderEvent */
-                $resourceType = $workingFolder->getResourceType();
-                return $this->createPath($resourceType, $workingFolder->getPath()) . ' -> ' . $this->createPath($resourceType, Path::combine(dirname($workingFolder->getPath()), $event->getNewFolderName()));
-        }
-    }
-
-    /**
-     * Creates a path in format:
-     * [backend name]://backend/relative/path
-     *
-     * @param ResourceType $resourceType resource type
-     * @param string       $path         backend relative path
-
-     * @return string formatted path
-     */
-    protected function createPath(ResourceType $resourceType, $path)
-    {
-        return $resourceType->getBackend()->getName() . '://' . $path;
     }
 
     /**
@@ -128,15 +59,27 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
      * @param CKFinderEvent $event     Event object
      * @param string        $eventName Event name
      *
-     * @throws \Exception if the log file is not writable.
+     * @throws \Exception if the log file is not writable
      */
-    public function logUserAction(CKFinderEvent $event, $eventName)
+    public function logUserAction(CKFinderEvent $event, string $eventName)
     {
         global $user; // Global dummy user object
 
-        $logLine = sprintf("[%s] - %s : %s (%s)\n", date('Y.m.d H:i:s'), $user->getUsername(), $eventName, $this->getInfoFromEvent($event, $eventName));
+        $logLine = sprintf(
+            "[%s] - %s : %s (%s)\n",
+            date('Y.m.d H:i:s'),
+            $user ? $user->getUsername() : 'dummyUser', // You should create your own User class
+            $eventName,
+            $this->getInfoFromEvent($event, $eventName)
+        );
 
         $logFilePath = $this->app['config']->get('UserActionsLogger.logFilePath');
+
+        $directoryName = pathinfo($logFilePath, PATHINFO_DIRNAME);
+
+        if (!file_exists($logFilePath) && is_writable($directoryName)) {
+            file_put_contents($logFilePath, '');
+        }
 
         if (!is_writable($logFilePath)) {
             throw new \Exception('UserActionsLogger: the log file is not writable', Error::CUSTOM_ERROR);
@@ -177,9 +120,87 @@ class UserActionsLogger implements PluginInterface, EventSubscriberInterface
             CKFinderEvent::RENAME_FOLDER,
             CKFinderEvent::SAVE_IMAGE,
             CKFinderEvent::EDIT_IMAGE,
-            CKFinderEvent::CREATE_RESIZED_IMAGE
+            CKFinderEvent::CREATE_RESIZED_IMAGE,
         ];
 
         return array_fill_keys($actionsToListen, 'logUserAction');
+    }
+
+    /**
+     * Returns a more detailed information about logged operation.
+     *
+     * Note: Due to the fact that all paths used by CKFinder needs to be relative, all paths in the log use following format:
+     * [backend name]://backend/relative/path
+     *
+     * @param CKFinderEvent $event     Event object
+     * @param string        $eventName Event name
+     *
+     * @return string more detailed information about the event - depending on event type
+     */
+    protected function getInfoFromEvent(CKFinderEvent $event, $eventName)
+    {
+        $workingFolder = $event->getContainer()->getWorkingFolder();
+
+        switch ($eventName) {
+            case CKFinderEvent::MOVE_FILE:
+            case CKFinderEvent::COPY_FILE:
+                /** @var \CKSource\CKFinder\Event\CopyFileEvent $event */
+                $copiedFile = $event->getFile();
+                $sourcePath = $this->createPath($copiedFile->getResourceType(), $copiedFile->getSourceFilePath());
+                $targetPath = $this->createPath($copiedFile->getTargetFolder()->getResourceType(), $copiedFile->getTargetFilePath());
+
+                return $sourcePath.' -> '.$targetPath;
+
+            case CKFinderEvent::DELETE_FILE:
+            case CKFinderEvent::DOWNLOAD_FILE:
+            case CKFinderEvent::SAVE_IMAGE:
+            case CKFinderEvent::EDIT_IMAGE:
+                /** @var \CKSource\CKFinder\Filesystem\File\ExistingFile $file */
+                $file = $event->getFile();
+
+                return $this->createPath($file->getResourceType(), $file->getFilePath());
+
+            case CKFinderEvent::RENAME_FILE:
+                /** @var \CKSource\CKFinder\Event\RenameFileEvent $event */
+                $renamedFile = $event->getFile();
+                $resourceType = $renamedFile->getResourceType();
+                $sourcePath = $this->createPath($resourceType, $renamedFile->getFilePath());
+                $targetPath = $this->createPath($resourceType, $renamedFile->getNewFilePath());
+
+                return $sourcePath.' -> '.$targetPath;
+
+            case CKFinderEvent::CREATE_RESIZED_IMAGE:
+                /** @var \CKSource\CKFinder\Event\ResizeImageEvent $event */
+                $resizedImage = $event->getResizedImage();
+
+                return $this->createPath($resizedImage->getResourceType(), $resizedImage->getFilePath());
+
+            case CKFinderEvent::CREATE_FOLDER:
+                // @var $event \CKSource\CKFinder\Event\CreateFolderEvent
+                return $this->createPath($workingFolder->getResourceType(), Path::combine($workingFolder->getPath(), $event->getNewFolderName()));
+
+            case CKFinderEvent::DELETE_FOLDER:
+                return $this->createPath($workingFolder->getResourceType(), $workingFolder->getPath());
+
+            case CKFinderEvent::RENAME_FOLDER:
+                /** @var \CKSource\CKFinder\Event\RenameFolderEvent $event */
+                $resourceType = $workingFolder->getResourceType();
+
+                return $this->createPath($resourceType, $workingFolder->getPath()).' -> '.$this->createPath($resourceType, Path::combine(\dirname($workingFolder->getPath()), $event->getNewFolderName()));
+        }
+    }
+
+    /**
+     * Creates a path in format:
+     * [backend name]://backend/relative/path.
+     *
+     * @param ResourceType $resourceType resource type
+     * @param string       $path         backend relative path
+     *
+     * @return string formatted path
+     */
+    protected function createPath(ResourceType $resourceType, $path)
+    {
+        return $resourceType->getBackend()->getName().'://'.$path;
     }
 }

@@ -3,12 +3,13 @@
 /*
  * CKFinder
  * ========
- * http://cksource.com/ckfinder
- * Copyright (C) 2007-2015, CKSource - Frederico Knabben. All rights reserved.
+ * https://ckeditor.com/ckfinder/
+ * Copyright (c) 2007-2021, CKSource - Frederico Knabben. All rights reserved.
  *
- * The software, this file and its contents are subject to the MIT License.
- * Please read the LICENSE.md file before using, installing, copying,
- * modifying or distribute this file or part of its contents.
+ * The software, this file and its contents are subject to the CKFinder
+ * License. Please read the license.txt file before using, installing, copying,
+ * modifying or distribute this file or part of its contents. The contents of
+ * this file is part of the Source Code of CKFinder.
  */
 
 namespace CKSource\CKFinder\Plugin\DiskQuota;
@@ -32,8 +33,6 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
 
     /**
      * Method used to inject the DI container to the plugin.
-     *
-     * @param CKFinder $app
      */
     public function setContainer(CKFinder $app)
     {
@@ -49,33 +48,14 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
     public function getDefaultConfig()
     {
         return [
-            'userQuota' => '100MB' // Quota defined using PHP shorthand byte value
+            'userQuota' => '100MB', // Quota defined using PHP shorthand byte value
         ];                         // (http://php.net/manual/pl/faq.using.php#faq.using.shorthandbytes)
-    }
-
-    /**
-     * Checks if the current user has any storage quota left.
-     *
-     * @return bool `false` if current user storage quota was exceeded, `true` otherwise.
-     */
-    protected function isQuotaAvailable()
-    {
-        // Get the user quota in bytes.
-        $quota = Utils::returnBytes($this->app['config']->get('DiskQuota.userQuota'));
-
-        /**
-         * For documentation purposes it is only a method stub.
-         *
-         * @todo Custom implementation of the current user quota check.
-         */
-
-        return true;
     }
 
     /**
      * Event listener checking current user quota.
      *
-     * @throws \Exception If storage quota for the current user is exceeded.
+     * @throws \Exception if storage quota for the current user is exceeded
      */
     public function checkQuota()
     {
@@ -100,15 +80,34 @@ class DiskQuota implements PluginInterface, EventSubscriberInterface
      *  * array('eventName' => array('methodName', $priority))
      *  * array('eventName' => array(array('methodName1', $priority), array('methodName2'))
      *
-     * @return array The event names to listen to.
+     * @return array the event names to listen to
      */
     public static function getSubscribedEvents()
     {
         return [
-            CKFinderEvent::BEFORE_COMMAND_FILE_UPLOAD   => 'checkQuota',
-            CKFinderEvent::BEFORE_COMMAND_COPY_FILES    => 'checkQuota',
-            CKFinderEvent::BEFORE_COMMAND_IMAGE_SCALE   => 'checkQuota',
-            CKFinderEvent::BEFORE_COMMAND_CREATE_FOLDER => 'checkQuota'
+            CKFinderEvent::BEFORE_COMMAND_FILE_UPLOAD => 'checkQuota',
+            CKFinderEvent::BEFORE_COMMAND_COPY_FILES => 'checkQuota',
+            CKFinderEvent::BEFORE_COMMAND_IMAGE_RESIZE => 'checkQuota',
+            CKFinderEvent::BEFORE_COMMAND_CREATE_FOLDER => 'checkQuota',
         ];
+    }
+
+    /**
+     * Checks if the current user has any storage quota left.
+     *
+     * @return bool `false` if current user storage quota was exceeded, `true` otherwise
+     */
+    protected function isQuotaAvailable()
+    {
+        // Get the user quota in bytes.
+        $quota = Utils::returnBytes($this->app['config']->get('DiskQuota.userQuota'));
+
+        /*
+         * For documentation purposes it is only a method stub.
+         *
+         * @todo Custom implementation of the current user quota check.
+         */
+
+        return true;
     }
 }
